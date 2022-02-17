@@ -9,9 +9,10 @@ class MembersView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            existing_email_list = Member.objects.all()
-            email_list = []
 
+            email_list = []
+            existing_email_list = Member.objects.all()
+            
             for user_email in existing_email_list:
                 email_list.append(user_email.email)
 
