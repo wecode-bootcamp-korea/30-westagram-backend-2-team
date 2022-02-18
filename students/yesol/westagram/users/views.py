@@ -10,10 +10,10 @@ class MembersView(View):
         try:
             data = json.loads(request.body)
             
-            if re.search("[@]", data["email"])==None or re.search("[.]", data["email"])==None :
+            if not re.search("[@]", data["email"]) or not re.search("[.]", data["email"]) :
                 return JsonResponse({"results":"EMAIL_ERROR"}, status=400)
             
-            if len(data["password"])<8 or re.search("[a-zA-Z0-9_]", data["password"])==None or re.search("[^a-zA-Z0-9_]", data["password"])==None:
+            if len(data["password"])<8 or not re.search("[a-zA-Z0-9_]", data["password"]) or not re.search("[^a-zA-Z0-9_]", data["password"]) :
                 return JsonResponse({"results":"PASSWORD_ERROR"}, status=400)
             
             if Member.objects.filter(email=data["email"]).exists() :
