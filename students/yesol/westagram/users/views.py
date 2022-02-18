@@ -5,7 +5,7 @@ from django.views import View
 
 from users.models import Member
 
-class MembersView(View):
+class MembersRegisterView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
@@ -25,6 +25,18 @@ class MembersView(View):
                 password     = data["password"],
                 phone_number = data["phone_number"]
             )
+            return JsonResponse({"results":"SUCCESS"}, status=201)
+        except KeyError:
+            return JsonResponse({"results":"KEY_ERROR"}, status=400)
+
+class MembersLoginView(View):
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+
+            if not Member.objects.filter(email=data["email"]).exists() or Member.objects.get(email=data["email"]).password != data["password"] :
+                return JsonResponse({"results":"INVALID_USER"}, status=401)
+
             return JsonResponse({"results":"SUCCESS"}, status=201)
         except KeyError:
             return JsonResponse({"results":"KEY_ERROR"}, status=400)
