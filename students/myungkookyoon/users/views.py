@@ -19,9 +19,11 @@ class SignupView(View):
             PASSWORD_VALIDATION = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
             
             if not re.match(EMAIL_VALIDATION, email):
-                return JsonResponse({'Message' : 'Invalid Email'},       status = 400)
+                return JsonResponse({'Message' : 'Invalid Email'}, status = 400)
+            
             if not re.match(PASSWORD_VALIDATION, password):
-                return JsonResponse({'Message' : 'Invalid Password'},    status = 400)
+                return JsonResponse({'Message' : 'Invalid Password'}, status = 400)
+            
             if User.objects.filter(email = email).exists():
                 return JsonResponse({'Message' : 'Email Already Exist'}, status = 400)
             
