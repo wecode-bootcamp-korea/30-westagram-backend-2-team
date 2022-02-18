@@ -9,9 +9,6 @@ class MembersView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-
-            # if data["email"]=="" or data["password"]=="" :
-            #     return JsonResponse({"results":"KEY_ERROR"}, status=400)
             
             if re.search("[@]", data["email"])==None or re.search("[.]", data["email"])==None :
                 return JsonResponse({"results":"EMAIL_ERROR"}, status=400)
@@ -22,7 +19,6 @@ class MembersView(View):
             if Member.objects.filter(email=data["email"]).exists() :
                 return JsonResponse({"results":"ALREADY_EXISTS"}, status=400)
             
-            
             Member.objects.create(
                 name         = data["name"],
                 email        = data["email"],
@@ -32,5 +28,3 @@ class MembersView(View):
             return JsonResponse({"results":"SUCCESS"}, status=201)
         except KeyError:
             return JsonResponse({"results":"KEY_ERROR"}, status=400)
-
-
