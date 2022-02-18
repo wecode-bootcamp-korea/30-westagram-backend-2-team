@@ -25,6 +25,7 @@ class SignUpView(View):
             
             if not re.match(email_regexp, email):
                 return JsonResponse({'message' : 'INVALID_EMAIL'}, status=400)
+            
             if not re.match(password_regexp, password):
                 return JsonResponse({'message' : 'INVALID_PASSWORD'}, status=400)
             
@@ -37,17 +38,3 @@ class SignUpView(View):
             return JsonResponse({'message' : 'SUCCESS'}, status=201)
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
-        
-        
-        
-        
-
-
-
-
-
-
-
-
-
-
