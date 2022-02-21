@@ -22,8 +22,8 @@ class MembersRegisterView(View):
             if Member.objects.filter(email=email).exists() :
                 return JsonResponse({"results":"ALREADY_EXISTS"}, status=400)
 
-            hashed_password = b.hashpw(input_password.encode("utf-8"), b.gensalt()) 
-            if b.checkpw(input_password.encode("utf-8"), hashed_password):
+            hashed_password = b.hashpw(input_password.encode("utf-8"), b.gensalt()).decode("utf-8")
+            if b.checkpw(input_password.encode("utf-8"), hashed_password.encode("utf-8")):
                 Member.objects.create(
                     name         = data["name"],
                     email        = email,
