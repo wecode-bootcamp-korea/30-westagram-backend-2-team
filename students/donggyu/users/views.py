@@ -31,13 +31,12 @@ class SignUpView(View):
             
             bytes_password  = data['password'].encode('utf-8')
             hashed_password = bcrypt.hashpw(bytes_password, bcrypt.gensalt())
-            save_password   = hashed_password.decode('utf-8')
             
             User.objects.create(
                 first_name   = first_name,
                 last_name    = last_name,
                 email        = email,
-                password     = save_password,
+                password     = hashed_password.decode('utf-8'),
                 phone_number = phone_number
                 )
             
