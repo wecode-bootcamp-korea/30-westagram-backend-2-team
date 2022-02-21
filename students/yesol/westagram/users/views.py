@@ -9,7 +9,8 @@ class MembersRegisterView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            email = data["email"]
+
+            email          = data["email"]
             input_password = data["password"]
             
             if not re.search("[@]", email) or not re.search("[.]", email) :
