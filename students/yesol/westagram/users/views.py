@@ -1,11 +1,13 @@
-import json, re, bcrypt
+import json, re, bcrypt, jwt
 
-from django.http  import JsonResponse
-from django.views import View
+from django.core.exceptions import ObjectDoesNotExist
+from django.http            import JsonResponse
+from django.views           import View
 
 from users.models import Member
+from my_settings import SECRET_KEY, ALGORITHM
 
-class MembersRegisterView(View):
+class MemberRegisterView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
@@ -32,14 +34,18 @@ class MembersRegisterView(View):
         except KeyError:
             return JsonResponse({"results":"KEY_ERROR"}, status=400)
 
-class MembersLoginView(View):
+class MemberLoginView(View):
     def post(self, request):
         try:
-            data = json.loads(request.body)
+            data   = json.loads(request.body)
+            member = Member.objects.get(email=data["email"])
 
-            if not Member.objects.filter(email=data["email"]).exists() or Member.objects.get(email=data["email"]).password != data["password"] :
+            if not bcrypt.checkpw(data["password"].encode("utf-8"), member.password.encode("utf-8")):
                 return JsonResponse({"results":"INVALID_USER"}, status=401)
-                
-            return JsonResponse({"results":"SUCCESS"}, status=201)
+
+            token = jwt.encode({"user_id":member.id}, SECRET_KEY, ALGORITHM)
+            return JsonResponse({"token":token}, status=200)
         except KeyError:
             return JsonResponse({"results":"KEY_ERROR"}, status=400)
+        except ObjectDoesNotExist:
+            return JsonResponse({"results":"INVALID_USER"}, status=401)
