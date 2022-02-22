@@ -19,13 +19,13 @@ class SignupView(View):
             PASSWORD_VALIDATION = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
             
             if not re.match(EMAIL_VALIDATION, email):
-                return JsonResponse({'message' : 'Invalid Email'}, status = 400)
+                return JsonResponse({'message':'Invalid Email'}, status=400)
             
             if not re.match(PASSWORD_VALIDATION, password):
-                return JsonResponse({'message' : 'Invalid Password'}, status = 400)
+                return JsonResponse({'message':'Invalid Password'}, status=400)
             
-            if User.objects.filter(email = email).exists():
-                return JsonResponse({'message' : 'Email Already Exist'}, status = 400)
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'message':'Email Already Exist'}, status=400)
             
             hashed_pw         = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
             decoded_hashed_pw = hashed_pw.decode('utf-8')
@@ -57,9 +57,9 @@ class SigninView(View):
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'message':'INVALID_USER'}, status=401)
 
-            access_token = jwt.encode({'id': user.id}, SECRET_KEY, ALGORITHM)
+            access_token = jwt.encode({'id':user.id}, SECRET_KEY, ALGORITHM)
                     
-            return JsonResponse({'access_token': access_token}, status=200)
+            return JsonResponse({'access_token':access_token}, status=200)
             
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
