@@ -11,13 +11,13 @@ class PostingView(View):
         postings_list = Posting.objects.all()
         results       = []
 
-        for i in postings_list:
+        for post in postings_list:
             results.append({
-                "user_id"   : i.member_id,
-                "image_url" : i.image_url,
-                "created_at": i.created_at
+                "user_id"   : post.member_id,
+                "image_url" : post.image_url,
+                "created_at": post.created_at
             })
-
+            
         return JsonResponse({"results":results}, status=200)
 
     def post(self, request):
