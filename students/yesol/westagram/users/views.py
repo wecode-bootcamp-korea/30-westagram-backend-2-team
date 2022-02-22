@@ -42,9 +42,8 @@ class MembersLoginView(View):
             if not member.exists():
                 return JsonResponse({"results":"EMAIL_ERROR"}, status=401)
 
-            token  = jwt.encode({"user_id":member[0].id}, SECRET_KEY, ALGORITHM)
-
             if bcrypt.checkpw(data["password"].encode("utf-8"), member[0].password.encode("utf-8")):
+                token  = jwt.encode({"user_id":member[0].id}, SECRET_KEY, ALGORITHM)
                 return JsonResponse({"token":token}, status=201)
             else:
                 return JsonResponse({"results":"PASSWORD_ERROR"}, status=401)
