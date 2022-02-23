@@ -11,8 +11,8 @@ class SignUpView(View):
     def post(self, request):
         try:
             data        = json.loads(request.body)
-            email       = data['email']
-            password    = data['password']
+            email       = data.get('email', 'email')
+            password    = data.get('password', 'password')
             EMAIL_RE    = r'^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             PASSWORD_RE = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
             
