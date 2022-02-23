@@ -32,4 +32,6 @@ class PostingView(View):
             return JsonResponse({"results":"SUCCESS"}, status=201)
         except KeyError:
             return JsonResponse({"results":"LACK_OF_INFORMATION"}, status=400)
+        except jwt.DecodeError:
+            return JsonResponse({"results":"INVALID_TOKEN"}, status=400)
 
