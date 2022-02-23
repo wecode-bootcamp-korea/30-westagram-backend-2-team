@@ -11,7 +11,6 @@ class PostingView(View):
         try:
             data    = json.loads(request.body)
             # 토큰을 디코딩해서 페이로드를 가져온다.
-            # 토큰이 없으면 키애러 발생, token에 벨류가 없는 것은 안 해봄
             payload = jwt.decode(data['token'], SECRET_KEY, ALGORITHM)
             
             Posting.objects.create(
@@ -20,16 +19,16 @@ class PostingView(View):
                 user_id   = payload['user_id']  
             )
             return JsonResponse({'message':'SUCCESS'}, status = 201)
-        
+        #토큰 값이 이상할 경우
         except jwt.exceptions.InvalidSignatureError:
             return JsonResponse({'message':'INVALID_USER'}, status = 401)
-        
+        #토큰 키는 있지만 벨류값이 빈 스트링이거나 값이 아예 없는 경우
         except jwt.exceptions.DecodeError:
             return JsonResponse({'message':'INVALID_USER'}, status = 401)
-        
+        #토큰 키가 없을 경우
         except KeyError:
             return JsonResponse({'result':'KEY_ERROR'}, status = 400)
-        
+        #아직 모르겠는 오류
         except Exception:
             return JsonResponse({'result':'500_ERROR'}, status = 400)
         
