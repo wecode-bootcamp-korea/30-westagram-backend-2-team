@@ -26,10 +26,10 @@ class MemberRegisterView(View):
                 return JsonResponse({"results":"ALREADY_EXISTS"}, status=400)
 
             Member.objects.create(
-                name         = "1", # data["name"],
+                name         = data["name"],
                 email        = email,
                 password     = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"),
-                phone_number = "111-111-111" # data["phone_number"]
+                phone_number = data["phone_number"]
             )
             return JsonResponse({"results":"SUCCESS"}, status=201)
         except KeyError:
