@@ -4,7 +4,7 @@ from django.http  import JsonResponse
 from django.views import View
 
 from my_settings     import SECRET_KEY, ALGORITHM
-from postings.models import Posting
+from postings.models import Posting, Comment
 
 class PostingView(View):
     def get(self, request):
@@ -17,7 +17,6 @@ class PostingView(View):
                 "image_url" : post.image_url,
                 "created_at": post.created_at
             })
-            
         return JsonResponse({"results":results}, status=200)
 
     def post(self, request):
@@ -31,7 +30,42 @@ class PostingView(View):
             )
             return JsonResponse({"results":"SUCCESS"}, status=201)
         except KeyError:
-            return JsonResponse({"results":"LACK_OF_INFORMATION"}, status=400)
+            return JsonResponse({"results":"KEYERROR"}, status=400)
         except jwt.DecodeError:
             return JsonResponse({"results":"INVALID_TOKEN"}, status=400)
+
+class CommentView(View):
+    def post(self, request):
+        try:
+            data    = json.loads(request.body)
+            payload = jwt.decode(data["token"], SECRET_KEY, ALGORITHM)
+
+            Comment.objects.create(
+                content    = data["content"],
+                posting_id = data["posting_id"],
+                member_id  = payload["user_id"]
+            )
+            return JsonResponse({"results":"SUCCESS"}, status=201)
+        except KeyError:
+            return JsonResponse({"results":"KEYERROR"}, status=400)
+        except jwt.DecodeError:
+            return JsonResponse({"results":"INVALID_TOKEN"}, status=400)
+
+    def get(self, request):
+        try:
+            posting_id    = 1
+            comments_list = Comment.objects.filter(posting_id=posting_id)
+            results       = []
+
+            for comment in comments_list:
+                results.append({
+                    "posting_id" : comment.posting_id,
+                    "content"    : comment.content,
+                    "member_id"  : comment.member_id
+                })
+            return JsonResponse({"results":results}, status=200)
+        except KeyError:
+            return JsonResponse({"results":"KEYERROR"}, status=400)
+
+
 
