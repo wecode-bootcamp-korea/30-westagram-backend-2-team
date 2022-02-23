@@ -3,6 +3,7 @@ import json, re, bcrypt, jwt
 from django.core.exceptions import ObjectDoesNotExist
 from django.http            import JsonResponse
 from django.views           import View
+from json                   import JSONDecodeError
 
 from users.models import Member
 from my_settings import SECRET_KEY, ALGORITHM
@@ -33,6 +34,8 @@ class MemberRegisterView(View):
             return JsonResponse({"results":"SUCCESS"}, status=201)
         except KeyError:
             return JsonResponse({"results":"KEY_ERROR"}, status=400)
+        except JSONDecodeError:
+            return JsonResponse({"results":"INVALID_DATA"}, status=400)
 
 class MemberLoginView(View):
     def post(self, request):
@@ -44,8 +47,11 @@ class MemberLoginView(View):
                 return JsonResponse({"results":"INVALID_USER"}, status=401)
 
             token = jwt.encode({"user_id":member.id}, SECRET_KEY, ALGORITHM)
-            return JsonResponse({"token":token}, status=200)
+            return JsonResponse({"message":"SUCCESS", "token":token}, status=200)
         except KeyError:
             return JsonResponse({"results":"KEY_ERROR"}, status=400)
         except ObjectDoesNotExist:
             return JsonResponse({"results":"INVALID_USER"}, status=401)
+        except JSONDecodeError:
+            return JsonResponse({"results":"INVALID_DATA"}, status=400)
+ 
