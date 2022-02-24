@@ -10,3 +10,11 @@ class Posting(models.Model):
     class Meta:
         db_table = "postings"
 
+class Comment(models.Model):
+    content = models.CharField(max_length=300)
+    created_at = models.DateTimeField(auto_now_add=True)
+    posting = models.ForeignKey("Posting", on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "comments"
