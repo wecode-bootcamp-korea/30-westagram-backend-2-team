@@ -1,4 +1,3 @@
-from operator import mod
 from django.db import models
 
 class Posting(models.Model):
@@ -9,3 +8,12 @@ class Posting(models.Model):
 
     class Meta:
         db_table = 'postings'
+        
+class Comment(models.Model):
+    user       = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    posting    = models.ForeignKey("postings.Posting", on_delete=models.CASCADE)
+    comment    = models.CharField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'comments'
