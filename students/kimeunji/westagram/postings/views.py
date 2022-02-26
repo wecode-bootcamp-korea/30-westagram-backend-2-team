@@ -78,7 +78,9 @@ class CommentView(views.View):
     @login_decorator
     def get(self, request):
         try:
-            comments = Comment.objects.all()
+            #body에 담긴 posting_id에 해당하는 댓글만 가져온다.
+            data = json.loads(request.body)
+            comments = Comment.objects.filter(posting_id=data['posting_id'])
             result = []
             for comment in comments:
                 result.append(
@@ -86,8 +88,7 @@ class CommentView(views.View):
                         'user'    : request.user.name,
                         #만약에 얘가 역참조라면 posting_id_set인건가?
                         #이건 필요없는 질문인게, 만약에 여기서 또 posting의 요소를 꺼내고 싶으면 
-                        #posting의 객체를 가져오는 방법으로 해야하쟈나..?
-                        #맞나....?
+                        #posting의 객체를 가져오는 방법으로 해야하는것같은딩..????
                         'posting' : comment.posting_id,
                         'comment' : comment.comment,
                         'created_at' : comment.created_at
