@@ -27,10 +27,10 @@ class PostingView(View) :
                     post = post
                 )
         
-            return JsonResponse({'MASSAGE':'SUCCESS'}, status=200)
+            return JsonResponse({'message':'SUCCESS'}, status=200)
 
         except KeyError :
-            return JsonResponse({'MASSAGE':'KEY_ERROR'}, status=400)
+            return JsonResponse({'message':'KEY_ERROR'}, status=400)
     
     @login_decorator
     def get(self, request) : 
@@ -42,4 +42,4 @@ class PostingView(View) :
         } for post in Post.objects.all()
         ]
 
-        return JsonResponse({'DATA' : post_list}, status=200)
+        return JsonResponse({'data' : post_list}, status=200)
