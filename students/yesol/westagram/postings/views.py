@@ -1,10 +1,12 @@
 import json, jwt
+from re import L
 
 from django.http  import JsonResponse
 from django.views import View
 
 from my_settings     import SECRET_KEY, ALGORITHM
 from postings.models import Posting, Comment
+from users.utils     import login_decorator
 
 class PostingView(View):
     def get(self, request):
@@ -19,13 +21,12 @@ class PostingView(View):
             })
         return JsonResponse({"results":results}, status=200)
 
+    @login_decorator
     def post(self, request):
         try:
             data    = json.loads(request.body)
-            payload = jwt.decode(data["token"], SECRET_KEY, ALGORITHM)
-
             Posting.objects.create(
-                member_id = payload["user_id"],
+                member_id = request.user.id,
                 image_url = data["image_url"]
             )
             return JsonResponse({"results":"SUCCESS"}, status=201)
@@ -35,15 +36,14 @@ class PostingView(View):
             return JsonResponse({"results":"INVALID_TOKEN"}, status=400)
 
 class CommentView(View):
+    @login_decorator
     def post(self, request):
         try:
             data    = json.loads(request.body)
-            payload = jwt.decode(data["token"], SECRET_KEY, ALGORITHM)
-
             Comment.objects.create(
                 content    = data["content"],
                 posting_id = data["posting_id"],
-                member_id  = payload["user_id"]
+                member_id  = request.user.id
             )
             return JsonResponse({"results":"SUCCESS"}, status=201)
         except KeyError:
